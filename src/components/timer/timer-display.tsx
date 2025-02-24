@@ -16,6 +16,7 @@ interface TimerDisplayProps {
   type: "pomodoro" | "countdown" | "stopwatch";
   currentTask?: Task;
   onComplete?: () => void;
+  onTimeChange?: (time: number) => void;
 }
 
 export function TimerDisplay({
@@ -23,11 +24,15 @@ export function TimerDisplay({
   type,
   currentTask,
   onComplete,
+  onTimeChange,
 }: TimerDisplayProps) {
   const [time, setTime] = useState(initialTime);
   const [isRunning, setIsRunning] = useState(false);
 
-  // Load timer state for specific task
+  useEffect(() => {
+    onTimeChange?.(time);
+  }, [time, onTimeChange]);
+
   useEffect(() => {
     if (currentTask?.timerState?.[type]) {
       setTime(currentTask.timerState[type]!.currentTime);

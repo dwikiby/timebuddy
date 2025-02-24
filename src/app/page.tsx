@@ -12,21 +12,7 @@ export default function Home() {
   >("pomodoro");
   const [currentTask, setCurrentTask] = useState<Task | undefined>();
   const [tasks, setTasks] = useState<Task[]>([]);
-
-  useEffect(() => {
-    const initializeDB = async () => {
-      try {
-        await initDB();
-        await loadTasks();
-      } catch (error) {
-        console.error("Error initializing database:", error);
-        await resetDatabase();
-        await loadTasks();
-      }
-    };
-
-    initializeDB();
-  }, []);
+  const [currentTime, setCurrentTime] = useState(25 * 60);
 
   const loadTasks = async () => {
     try {
@@ -47,27 +33,62 @@ export default function Home() {
     }
   };
 
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+  useEffect(() => {
+    document.title = `${formatTime(currentTime)} - Your Time Starts Now`;
+  }, [currentTime]);
+
+  useEffect(() => {
+    const initializeDB = async () => {
+      try {
+        await initDB();
+        await loadTasks();
+      } catch (error) {
+        console.error("Error initializing database:", error);
+        await resetDatabase();
+        await loadTasks();
+      }
+    };
+
+    initializeDB();
+  }, []);
+
   return (
     <main className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-center mb-8">Timebuddy</h1>
-
       <Tabs defaultValue="pomodoro" className="max-w-md mx-auto mb-8">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger
             value="pomodoro"
-            onClick={() => setTimerType("pomodoro")}
+            onClick={() => {
+              setTimerType("pomodoro");
+              setCurrentTime(25 * 60);
+            }}
           >
             Pomodoro
           </TabsTrigger>
           <TabsTrigger
             value="countdown"
-            onClick={() => setTimerType("countdown")}
+            onClick={() => {
+              setTimerType("countdown");
+              setCurrentTime(60 * 60);
+            }}
           >
             Countdown
           </TabsTrigger>
           <TabsTrigger
             value="stopwatch"
-            onClick={() => setTimerType("stopwatch")}
+            onClick={() => {
+              setTimerType("stopwatch");
+              setCurrentTime(0);
+            }}
           >
             Stopwatch
           </TabsTrigger>
@@ -79,6 +100,7 @@ export default function Home() {
             type="pomodoro"
             currentTask={currentTask}
             onComplete={loadTasks}
+            onTimeChange={setCurrentTime}
           />
         </TabsContent>
         <TabsContent value="countdown">
@@ -86,6 +108,7 @@ export default function Home() {
             initialTime={60 * 60}
             type="countdown"
             currentTask={currentTask}
+            onTimeChange={setCurrentTime}
           />
         </TabsContent>
         <TabsContent value="stopwatch">
@@ -93,6 +116,7 @@ export default function Home() {
             initialTime={0}
             type="stopwatch"
             currentTask={currentTask}
+            onTimeChange={setCurrentTime}
           />
         </TabsContent>
       </Tabs>
