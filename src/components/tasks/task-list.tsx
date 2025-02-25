@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Task, addTask, updateTask, deleteTask } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, X, Check } from "lucide-react";
+import { Plus, X, Check, Minus } from "lucide-react";
 
 interface TaskListProps {
   tasks: Task[];
@@ -117,7 +117,7 @@ export function TaskList({
                       handleEstimateChange(task, -1);
                     }}
                   >
-                    -
+                    <Minus />
                   </Button>
                   <span className="mx-2">
                     {task.completedPomodoros}/{task.estimatedPomodoros}
@@ -130,7 +130,7 @@ export function TaskList({
                       handleEstimateChange(task, 1);
                     }}
                   >
-                    +
+                    <Plus />
                   </Button>
                 </div>
                 <Button

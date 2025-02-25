@@ -10,6 +10,7 @@ import {
   requestNotificationPermission,
   showNotification,
 } from "@/lib/notification";
+import { Settings2 } from "lucide-react";
 
 interface TimerDisplayProps {
   initialTime: number;
@@ -151,6 +152,9 @@ export function TimerDisplay({
             className="w-24"
           >
             Reset
+          </Button>
+          <Button variant="outline" className="w-10">
+            <Settings2 />
           </Button>
         </div>
       </CardContent>
